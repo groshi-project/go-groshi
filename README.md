@@ -1,2 +1,2 @@
 # go-groshi
-Go client library for [groshi API](https://github.com/groshi-project/groshi).
+go client library for [groshi API](https://github.com/groshi-project/groshi)
