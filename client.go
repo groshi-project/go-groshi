@@ -15,6 +15,8 @@ const timeFormat = time.RFC3339 // RFC-3339 is the time format which is used by 
 
 // GroshiAPIError represents groshi API error.
 type GroshiAPIError struct {
+	HTTPStatusCode int
+
 	ErrorMessage string
 	ErrorDetails []string
 }
@@ -89,7 +91,9 @@ func (c *GroshiAPIClient) sendRequest(
 		}
 		return nil
 	} else {
-		groshiAPIError := GroshiAPIError{}
+		groshiAPIError := GroshiAPIError{
+			HTTPStatusCode: httpResponse.StatusCode,
+		}
 		if err := json.Unmarshal(responseBody, &groshiAPIError); err != nil {
 			return err
 		}
@@ -294,6 +298,7 @@ func (c *GroshiAPIClient) TransactionsUpdate(
 		bodyParams["new_currency"] = newCurrency
 	}
 	if newDescription != nil {
+
 		bodyParams["new_description"] = *newDescription
 	}
 	if newTimestamp != nil {
