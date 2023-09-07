@@ -30,15 +30,15 @@ func (e GroshiAPIError) Error() string {
 // GroshiAPIClient TODO
 type GroshiAPIClient struct {
 	baseURL string
-	Token   string
+	token   string
 }
 
 // sendRequest is the basic method for sending HTTP requests to groshi API.
 func (c *GroshiAPIClient) sendRequest(
 	method string, path string, queryParams map[string]string, bodyParams map[string]any, authorize bool, v interface{},
 ) error {
-	if authorize && c.Token == "" { // todo: ??
-		panic("`authorize` is set to true, but no authorization token was provided")
+	if authorize && c.token == "" {
+		panic("`authorize` is set to true, but GroshiAPIClient's field `token` is an empty string")
 	}
 
 	// create URL object and set query params:
@@ -66,7 +66,7 @@ func (c *GroshiAPIClient) sendRequest(
 
 	request.Header.Set("Content-Type", "application/json")
 	if authorize {
-		request.Header.Set("Authorization", fmt.Sprintf("Bearer %v", c.Token))
+		request.Header.Set("Authorization", fmt.Sprintf("Bearer %v", c.token))
 	}
 
 	httpClient := http.Client{
@@ -93,7 +93,7 @@ func (c *GroshiAPIClient) sendRequest(
 		if err := json.Unmarshal(responseBody, &groshiAPIError); err != nil {
 			return err
 		}
-		return &groshiAPIError
+		return groshiAPIError
 	}
 }
 
@@ -109,7 +109,7 @@ func (c *GroshiAPIClient) sendRequest(
 // currentUser, _ := client.UserRead()
 // fmt.Printf("Authorized as %v", currentUser.Username)
 func (c *GroshiAPIClient) SetToken(token string) {
-	c.Token = token
+	c.token = token
 }
 
 // Auth is a helper function that uses AuthLogin groshi API method to authorize user.
@@ -144,19 +144,6 @@ func (c *GroshiAPIClient) AuthLogin(username string, password string) (*Authoriz
 		&authorization,
 	)
 	return &authorization, err
-}
-
-func (c *GroshiAPIClient) AuthLogout() (*Empty, error) {
-	empty := Empty{}
-	err := c.sendRequest(
-		http.MethodPost,
-		"/auth/logout",
-		nil,
-		nil,
-		true,
-		&empty,
-	)
-	return &empty, err
 }
 
 func (c *GroshiAPIClient) AuthRefresh() (*Authorization, error) {
@@ -239,7 +226,7 @@ func (c *GroshiAPIClient) UserDelete() (*User, error) {
 
 // methods related to transactions:
 
-func (c *GroshiAPIClient) TransactionsCreate(amount int, currency string, description *string, date *time.Time) (*Transaction, error) {
+func (c *GroshiAPIClient) TransactionsCreate(amount int, currency string, description *string, timestamp *time.Time) (*Transaction, error) {
 	bodyParams := map[string]any{
 		"amount":   amount,
 		"currency": currency,
@@ -247,8 +234,8 @@ func (c *GroshiAPIClient) TransactionsCreate(amount int, currency string, descri
 	if description != nil {
 		bodyParams["description"] = *description
 	}
-	if date != nil {
-		bodyParams["date"] = *date
+	if timestamp != nil {
+		bodyParams["timestamp"] = *timestamp
 	}
 
 	transaction := Transaction{}
@@ -297,7 +284,7 @@ func (c *GroshiAPIClient) TransactionsReadMany(startTime time.Time, endTime *tim
 }
 
 func (c *GroshiAPIClient) TransactionsUpdate(
-	uuid string, newAmount *int, newCurrency *string, newDescription *string, newDate *time.Time,
+	uuid string, newAmount *int, newCurrency *string, newDescription *string, newTimestamp *time.Time,
 ) (*Transaction, error) {
 	bodyParams := make(map[string]any)
 	if newAmount != nil {
@@ -309,8 +296,8 @@ func (c *GroshiAPIClient) TransactionsUpdate(
 	if newDescription != nil {
 		bodyParams["new_description"] = *newDescription
 	}
-	if newDate != nil {
-		bodyParams["new_date"] = (*newDate).Format(timeFormat)
+	if newTimestamp != nil {
+		bodyParams["new_timestamp"] = (*newTimestamp).Format(timeFormat)
 	}
 
 	transaction := Transaction{}
@@ -364,6 +351,6 @@ func (c *GroshiAPIClient) TransactionsReadSummary(startTime time.Time, currency 
 func NewGroshiAPIClient(baseURL string, token string) *GroshiAPIClient {
 	return &GroshiAPIClient{
 		baseURL: strings.TrimRight(baseURL, "/"),
-		Token:   token,
+		token:   token,
 	}
 }

@@ -2,9 +2,6 @@ package go_groshi
 
 import "time"
 
-// Empty represents empty response.
-type Empty struct{}
-
 // Authorization represents successful response containing JWT to the authorization request.
 type Authorization struct {
 	Token     string    `json:"token"`
@@ -20,10 +17,10 @@ type User struct {
 type Transaction struct {
 	UUID string `json:"uuid"`
 
-	Amount      int    `json:"amount"`
-	Currency    string `json:"currency"`
-	Description string `json:"description"`
-	Date        string `json:"date"`
+	Amount      int       `json:"amount"`
+	Currency    string    `json:"currency"`
+	Description string    `json:"description"`
+	Time        time.Time `json:"time"`
 
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
