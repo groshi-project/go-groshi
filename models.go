@@ -20,7 +20,7 @@ type Transaction struct {
 	Amount      int       `json:"amount"`
 	Currency    string    `json:"currency"`
 	Description string    `json:"description"`
-	Time        time.Time `json:"time"`
+	Timestamp   time.Time `json:"timestamp"`
 
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
