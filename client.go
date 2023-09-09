@@ -147,6 +147,9 @@ func (c *GroshiAPIClient) AuthLogin(username string, password string) (*Authoriz
 		false,
 		&authorization,
 	)
+	if err != nil {
+		return nil, err
+	}
 	return &authorization, err
 }
 
@@ -160,6 +163,9 @@ func (c *GroshiAPIClient) AuthRefresh() (*Authorization, error) {
 		true,
 		&authorization,
 	)
+	if err != nil {
+		return nil, err
+	}
 	return &authorization, err
 }
 
@@ -178,6 +184,9 @@ func (c *GroshiAPIClient) UserCreate(username string, password string) (*User, e
 		false,
 		&user,
 	)
+	if err != nil {
+		return nil, err
+	}
 	return &user, err
 }
 
@@ -191,6 +200,9 @@ func (c *GroshiAPIClient) UserRead() (*User, error) {
 		true,
 		&user,
 	)
+	if err != nil {
+		return nil, err
+	}
 	return &user, err
 }
 
@@ -212,6 +224,9 @@ func (c *GroshiAPIClient) UserUpdate(newUsername *string, newPassword *string) (
 		true,
 		&user,
 	)
+	if err != nil {
+		return nil, err
+	}
 	return &user, err
 }
 
@@ -225,6 +240,9 @@ func (c *GroshiAPIClient) UserDelete() (*User, error) {
 		true,
 		&user,
 	)
+	if err != nil {
+		return nil, err
+	}
 	return &user, err
 }
 
@@ -251,6 +269,9 @@ func (c *GroshiAPIClient) TransactionsCreate(amount int, currency string, descri
 		true,
 		&transaction,
 	)
+	if err != nil {
+		return nil, err
+	}
 	return &transaction, err
 }
 
@@ -264,6 +285,9 @@ func (c *GroshiAPIClient) TransactionsReadOne(uuid string) (*Transaction, error)
 		true,
 		&transaction,
 	)
+	if err != nil {
+		return nil, err
+	}
 	return &transaction, err
 }
 
@@ -284,6 +308,9 @@ func (c *GroshiAPIClient) TransactionsReadMany(startTime time.Time, endTime *tim
 		true,
 		&transactions,
 	)
+	if err != nil {
+		return nil, err
+	}
 	return transactions, err
 }
 
@@ -314,6 +341,9 @@ func (c *GroshiAPIClient) TransactionsUpdate(
 		true,
 		&transaction,
 	)
+	if err != nil {
+		return nil, err
+	}
 	return &transaction, err
 }
 
@@ -327,6 +357,9 @@ func (c *GroshiAPIClient) TransactionsDelete(uuid string) (*Transaction, error) 
 		true,
 		&transaction,
 	)
+	if err != nil {
+		return nil, err
+	}
 	return &transaction, err
 }
 
@@ -348,6 +381,9 @@ func (c *GroshiAPIClient) TransactionsReadSummary(startTime time.Time, currency 
 		true,
 		&transactionsSummary,
 	)
+	if err != nil {
+		return nil, err
+	}
 	return &transactionsSummary, err
 }
 
