@@ -91,13 +91,16 @@ func (c *GroshiAPIClient) sendRequest(
 		}
 		return nil
 	} else {
-		groshiAPIError := GroshiAPIError{
-			HTTPStatusCode: httpResponse.StatusCode,
-		}
-		if err := json.Unmarshal(responseBody, &groshiAPIError); err != nil {
+		errorModel := Error{}
+		if err := json.Unmarshal(responseBody, &errorModel); err != nil {
 			return err
 		}
-		return groshiAPIError
+		return GroshiAPIError{
+			ErrorMessage: errorModel.ErrorMessage,
+			ErrorDetails: errorModel.ErrorDetails,
+
+			HTTPStatusCode: httpResponse.StatusCode,
+		}
 	}
 }
 
