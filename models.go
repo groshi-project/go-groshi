@@ -28,7 +28,7 @@ type Transaction struct {
 
 // TransactionsSummary represents summary of transactions, returned by transactionsReadSummary handler.
 type TransactionsSummary struct {
-	Currency string `json:"currency" example:"USD"`
+	Currency string `json:"currency"`
 
 	Income  int `json:"income"`
 	Outcome int `json:"outcome"`
@@ -39,6 +39,6 @@ type TransactionsSummary struct {
 
 // Error represents response containing information about API error.
 type Error struct {
-	ErrorMessage string   `json:"error_message" example:"example error message"`
+	ErrorMessage string   `json:"error_message"`
 	ErrorDetails []string `json:"error_details"`
 }
