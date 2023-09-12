@@ -366,10 +366,10 @@ func (c *GroshiAPIClient) TransactionsDelete(uuid string) (*Transaction, error) 
 	return &transaction, err
 }
 
-func (c *GroshiAPIClient) TransactionsReadSummary(startTime time.Time, currency string, endTime *time.Time) (*TransactionsSummary, error) {
+func (c *GroshiAPIClient) TransactionsReadSummary(currency string, startTime time.Time, endTime *time.Time) (*TransactionsSummary, error) {
 	queryParams := map[string]string{
-		"start_time": startTime.Format(timeFormat),
 		"currency":   currency,
+		"start_time": startTime.Format(timeFormat),
 	}
 	if endTime != nil {
 		queryParams["end_time"] = (*endTime).Format(timeFormat)
