@@ -278,12 +278,18 @@ func (c *GroshiAPIClient) TransactionsCreate(amount int, currency string, descri
 	return &transaction, err
 }
 
-func (c *GroshiAPIClient) TransactionsReadOne(uuid string) (*Transaction, error) {
+func (c *GroshiAPIClient) TransactionsReadOne(uuid string, currency *string) (*Transaction, error) {
+	var queryParams map[string]string
+	if currency != nil {
+		queryParams = make(map[string]string) // initialize the map only if it is needed
+		queryParams["currency"] = *currency
+	}
+
 	transaction := Transaction{}
 	err := c.sendRequest(
 		http.MethodGet,
 		fmt.Sprintf("/transactions/%v", uuid),
-		nil,
+		queryParams,
 		nil,
 		true,
 		&transaction,
@@ -294,12 +300,15 @@ func (c *GroshiAPIClient) TransactionsReadOne(uuid string) (*Transaction, error)
 	return &transaction, err
 }
 
-func (c *GroshiAPIClient) TransactionsReadMany(startTime time.Time, endTime *time.Time) ([]*Transaction, error) {
+func (c *GroshiAPIClient) TransactionsReadMany(startTime time.Time, endTime *time.Time, currency *string) ([]*Transaction, error) {
 	queryParams := map[string]string{
 		"start_time": startTime.Format(timeFormat),
 	}
 	if endTime != nil {
 		queryParams["end_time"] = (*endTime).Format(timeFormat)
+	}
+	if currency != nil {
+		queryParams["currency"] = *currency
 	}
 
 	transactions := make([]*Transaction, 0)
