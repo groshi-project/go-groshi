@@ -153,7 +153,7 @@ func (c *GroshiAPIClient) AuthLogin(username string, password string) (*Authoriz
 	if err != nil {
 		return nil, err
 	}
-	return &authorization, err
+	return &authorization, nil
 }
 
 func (c *GroshiAPIClient) AuthRefresh() (*Authorization, error) {
@@ -169,7 +169,7 @@ func (c *GroshiAPIClient) AuthRefresh() (*Authorization, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &authorization, err
+	return &authorization, nil
 }
 
 // methods related to user:
@@ -190,7 +190,7 @@ func (c *GroshiAPIClient) UserCreate(username string, password string) (*User, e
 	if err != nil {
 		return nil, err
 	}
-	return &user, err
+	return &user, nil
 }
 
 func (c *GroshiAPIClient) UserRead() (*User, error) {
@@ -206,7 +206,7 @@ func (c *GroshiAPIClient) UserRead() (*User, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &user, err
+	return &user, nil
 }
 
 func (c *GroshiAPIClient) UserUpdate(newUsername *string, newPassword *string) (*User, error) {
@@ -230,7 +230,7 @@ func (c *GroshiAPIClient) UserUpdate(newUsername *string, newPassword *string) (
 	if err != nil {
 		return nil, err
 	}
-	return &user, err
+	return &user, nil
 }
 
 func (c *GroshiAPIClient) UserDelete() (*User, error) {
@@ -246,7 +246,7 @@ func (c *GroshiAPIClient) UserDelete() (*User, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &user, err
+	return &user, nil
 }
 
 // methods related to transactions:
@@ -275,7 +275,7 @@ func (c *GroshiAPIClient) TransactionsCreate(amount int, currency string, descri
 	if err != nil {
 		return nil, err
 	}
-	return &transaction, err
+	return &transaction, nil
 }
 
 func (c *GroshiAPIClient) TransactionsReadOne(uuid string, currency *string) (*Transaction, error) {
@@ -297,7 +297,7 @@ func (c *GroshiAPIClient) TransactionsReadOne(uuid string, currency *string) (*T
 	if err != nil {
 		return nil, err
 	}
-	return &transaction, err
+	return &transaction, nil
 }
 
 func (c *GroshiAPIClient) TransactionsReadMany(startTime time.Time, endTime *time.Time, currency *string) ([]*Transaction, error) {
@@ -323,7 +323,7 @@ func (c *GroshiAPIClient) TransactionsReadMany(startTime time.Time, endTime *tim
 	if err != nil {
 		return nil, err
 	}
-	return transactions, err
+	return transactions, nil
 }
 
 func (c *GroshiAPIClient) TransactionsUpdate(
@@ -356,7 +356,7 @@ func (c *GroshiAPIClient) TransactionsUpdate(
 	if err != nil {
 		return nil, err
 	}
-	return &transaction, err
+	return &transaction, nil
 }
 
 func (c *GroshiAPIClient) TransactionsDelete(uuid string) (*Transaction, error) {
@@ -372,7 +372,7 @@ func (c *GroshiAPIClient) TransactionsDelete(uuid string) (*Transaction, error) 
 	if err != nil {
 		return nil, err
 	}
-	return &transaction, err
+	return &transaction, nil
 }
 
 func (c *GroshiAPIClient) TransactionsReadSummary(currency string, startTime time.Time, endTime *time.Time) (*TransactionsSummary, error) {
@@ -387,7 +387,7 @@ func (c *GroshiAPIClient) TransactionsReadSummary(currency string, startTime tim
 	transactionsSummary := TransactionsSummary{}
 	err := c.sendRequest(
 		http.MethodGet,
-		fmt.Sprintf("/transactions/summary"),
+		"/transactions/summary",
 		queryParams,
 		nil,
 		true,
@@ -396,7 +396,7 @@ func (c *GroshiAPIClient) TransactionsReadSummary(currency string, startTime tim
 	if err != nil {
 		return nil, err
 	}
-	return &transactionsSummary, err
+	return &transactionsSummary, nil
 }
 
 // methods related to transactions:
