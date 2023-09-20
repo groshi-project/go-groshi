@@ -29,7 +29,7 @@ func (e GroshiAPIError) Error() string {
 	}
 }
 
-// GroshiAPIClient TODO
+// GroshiAPIClient represents groshi API client and includes all groshi API methods.
 type GroshiAPIClient struct {
 	baseURL string
 	token   string
