@@ -399,6 +399,25 @@ func (c *GroshiAPIClient) TransactionsReadSummary(currency string, startTime tim
 	return &transactionsSummary, err
 }
 
+// methods related to transactions:
+
+// CurrenciesRead returns slice of available currency codes in ISO-4217 format.
+func (c *GroshiAPIClient) CurrenciesRead() (*Currencies, error) {
+	currencies := Currencies{}
+	err := c.sendRequest(
+		http.MethodGet,
+		"/currencies",
+		nil,
+		nil,
+		false,
+		&currencies,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return &currencies, nil
+}
+
 // NewGroshiAPIClient creates a new GroshiAPIClient instance and returns pointer to it.
 // It is the recommended method to produce GroshiAPIClient.
 func NewGroshiAPIClient(baseURL string, token string) *GroshiAPIClient {
