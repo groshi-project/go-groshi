@@ -334,10 +334,9 @@ func (c *GroshiAPIClient) TransactionsUpdate(
 		bodyParams["new_amount"] = *newAmount
 	}
 	if newCurrency != nil {
-		bodyParams["new_currency"] = newCurrency
+		bodyParams["new_currency"] = *newCurrency
 	}
 	if newDescription != nil {
-
 		bodyParams["new_description"] = *newDescription
 	}
 	if newTimestamp != nil {
@@ -349,7 +348,7 @@ func (c *GroshiAPIClient) TransactionsUpdate(
 		http.MethodPut,
 		fmt.Sprintf("/transactions/%v", uuid),
 		nil,
-		nil,
+		bodyParams,
 		true,
 		&transaction,
 	)
