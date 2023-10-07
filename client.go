@@ -401,8 +401,8 @@ func (c *GroshiAPIClient) TransactionsReadSummary(currency string, startTime tim
 // methods related to transactions:
 
 // CurrenciesRead returns slice of available currencies.
-func (c *GroshiAPIClient) CurrenciesRead() (*[]Currency, error) {
-	var currencies []Currency
+func (c *GroshiAPIClient) CurrenciesRead() ([]*Currency, error) {
+	var currencies []*Currency
 	err := c.sendRequest(
 		http.MethodGet,
 		"/currencies",
@@ -414,7 +414,7 @@ func (c *GroshiAPIClient) CurrenciesRead() (*[]Currency, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &currencies, nil
+	return currencies, nil
 }
 
 // NewGroshiAPIClient creates a new GroshiAPIClient instance and returns pointer to it.
