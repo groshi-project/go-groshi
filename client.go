@@ -400,9 +400,9 @@ func (c *GroshiAPIClient) TransactionsReadSummary(currency string, startTime tim
 
 // methods related to transactions:
 
-// CurrenciesRead returns slice of available currency codes in ISO-4217 format.
-func (c *GroshiAPIClient) CurrenciesRead() (*Currencies, error) {
-	currencies := Currencies{}
+// CurrenciesRead returns slice of available currencies.
+func (c *GroshiAPIClient) CurrenciesRead() (*[]Currency, error) {
+	var currencies []Currency
 	err := c.sendRequest(
 		http.MethodGet,
 		"/currencies",
