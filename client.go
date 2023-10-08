@@ -13,15 +13,15 @@ import (
 
 const timeFormat = time.RFC3339 // RFC-3339 is the time format which is used by groshi API
 
-// GroshiAPIError represents groshi API error.
-type GroshiAPIError struct {
+// APIError represents groshi API error.
+type APIError struct {
 	HTTPStatusCode int
 
 	ErrorMessage string
 	ErrorDetails []string
 }
 
-func (e GroshiAPIError) Error() string {
+func (e APIError) Error() string {
 	if len(e.ErrorDetails) == 0 {
 		return e.ErrorMessage
 	} else {
@@ -29,18 +29,18 @@ func (e GroshiAPIError) Error() string {
 	}
 }
 
-// GroshiAPIClient represents groshi API client and includes all groshi API methods.
-type GroshiAPIClient struct {
+// APIClient represents groshi API client and includes all groshi API methods.
+type APIClient struct {
 	baseURL string
 	token   string
 }
 
 // sendRequest is the basic method for sending HTTP requests to groshi API.
-func (c *GroshiAPIClient) sendRequest(
+func (c *APIClient) sendRequest(
 	method string, path string, queryParams map[string]string, bodyParams map[string]any, authorize bool, v interface{},
 ) error {
 	if authorize && c.token == "" {
-		panic("`authorize` is set to true, but GroshiAPIClient's field `token` is an empty string")
+		panic("`authorize` is set to true, but APIClient's field `token` is an empty string")
 	}
 
 	// create URL object and set query params:
@@ -95,7 +95,7 @@ func (c *GroshiAPIClient) sendRequest(
 		if err := json.Unmarshal(responseBody, &errorModel); err != nil {
 			return err
 		}
-		return GroshiAPIError{
+		return APIError{
 			ErrorMessage: errorModel.ErrorMessage,
 			ErrorDetails: errorModel.ErrorDetails,
 
@@ -105,28 +105,28 @@ func (c *GroshiAPIClient) sendRequest(
 }
 
 // SetToken is a setter method for authorization token.
-// May be useful if you, for example, use GroshiAPIClient
+// May be useful if you, for example, use APIClient
 // to create a new user and then perform some operations
 // that require authorization. For example:
 //
-// client := NewGroshiAPIClient("http://localhost:8080", "") // create groshi client with empty token
+// client := NewAPIClient("http://localhost:8080", "") // create groshi client with empty token
 // _, _ = client.UserCreate("username-1234", "password-1234")
 // auth, _ := client.AuthLogin("username-1234", "password-1234")
 // client.SetToken(auth.Token)
 // currentUser, _ := client.UserRead()
 // fmt.Printf("Authorized as %v", currentUser.Username)
-func (c *GroshiAPIClient) SetToken(token string) {
+func (c *APIClient) SetToken(token string) {
 	c.token = token
 }
 
 // Auth is a helper function that uses AuthLogin groshi API method to authorize user.
 // It also sets Token field of the `c` to the received token. Example:
 //
-// client := NewGroshiAPIClient("http://localhost:8080", "")
+// client := NewAPIClient("http://localhost:8080", "")
 // err := client.Auth("username-1234", "password-1234")
 // currentUser, _ := client.UserRead()
 // fmt.Printf("Authorized as %v", currentUser.Username)
-func (c *GroshiAPIClient) Auth(username string, password string) error {
+func (c *APIClient) Auth(username string, password string) error {
 	authorization, err := c.AuthLogin(username, password)
 	if err != nil {
 		return err
@@ -137,7 +137,7 @@ func (c *GroshiAPIClient) Auth(username string, password string) error {
 
 // methods related to authorization:
 
-func (c *GroshiAPIClient) AuthLogin(username string, password string) (*Authorization, error) {
+func (c *APIClient) AuthLogin(username string, password string) (*Authorization, error) {
 	authorization := Authorization{}
 	err := c.sendRequest(
 		http.MethodPost,
@@ -156,7 +156,7 @@ func (c *GroshiAPIClient) AuthLogin(username string, password string) (*Authoriz
 	return &authorization, nil
 }
 
-func (c *GroshiAPIClient) AuthRefresh() (*Authorization, error) {
+func (c *APIClient) AuthRefresh() (*Authorization, error) {
 	authorization := Authorization{}
 	err := c.sendRequest(
 		http.MethodPost,
@@ -174,7 +174,7 @@ func (c *GroshiAPIClient) AuthRefresh() (*Authorization, error) {
 
 // methods related to user:
 
-func (c *GroshiAPIClient) UserCreate(username string, password string) (*User, error) {
+func (c *APIClient) UserCreate(username string, password string) (*User, error) {
 	user := User{}
 	err := c.sendRequest(
 		http.MethodPost,
@@ -193,7 +193,7 @@ func (c *GroshiAPIClient) UserCreate(username string, password string) (*User, e
 	return &user, nil
 }
 
-func (c *GroshiAPIClient) UserRead() (*User, error) {
+func (c *APIClient) UserRead() (*User, error) {
 	user := User{}
 	err := c.sendRequest(
 		http.MethodGet,
@@ -209,7 +209,7 @@ func (c *GroshiAPIClient) UserRead() (*User, error) {
 	return &user, nil
 }
 
-func (c *GroshiAPIClient) UserUpdate(newUsername *string, newPassword *string) (*User, error) {
+func (c *APIClient) UserUpdate(newUsername *string, newPassword *string) (*User, error) {
 	bodyParams := make(map[string]any)
 	if newUsername != nil {
 		bodyParams["new_username"] = *newUsername
@@ -233,7 +233,7 @@ func (c *GroshiAPIClient) UserUpdate(newUsername *string, newPassword *string) (
 	return &user, nil
 }
 
-func (c *GroshiAPIClient) UserDelete() (*User, error) {
+func (c *APIClient) UserDelete() (*User, error) {
 	user := User{}
 	err := c.sendRequest(
 		http.MethodDelete,
@@ -251,7 +251,7 @@ func (c *GroshiAPIClient) UserDelete() (*User, error) {
 
 // methods related to transactions:
 
-func (c *GroshiAPIClient) TransactionsCreate(amount int, currency string, description *string, timestamp *time.Time) (*Transaction, error) {
+func (c *APIClient) TransactionsCreate(amount int, currency string, description *string, timestamp *time.Time) (*Transaction, error) {
 	bodyParams := map[string]any{
 		"amount":   amount,
 		"currency": currency,
@@ -278,7 +278,7 @@ func (c *GroshiAPIClient) TransactionsCreate(amount int, currency string, descri
 	return &transaction, nil
 }
 
-func (c *GroshiAPIClient) TransactionsReadOne(uuid string, currency *string) (*Transaction, error) {
+func (c *APIClient) TransactionsReadOne(uuid string, currency *string) (*Transaction, error) {
 	var queryParams map[string]string
 	if currency != nil {
 		queryParams = make(map[string]string) // initialize the map only if it is needed
@@ -300,7 +300,7 @@ func (c *GroshiAPIClient) TransactionsReadOne(uuid string, currency *string) (*T
 	return &transaction, nil
 }
 
-func (c *GroshiAPIClient) TransactionsReadMany(startTime time.Time, endTime *time.Time, currency *string) ([]*Transaction, error) {
+func (c *APIClient) TransactionsReadMany(startTime time.Time, endTime *time.Time, currency *string) ([]*Transaction, error) {
 	queryParams := map[string]string{
 		"start_time": startTime.Format(timeFormat),
 	}
@@ -326,7 +326,7 @@ func (c *GroshiAPIClient) TransactionsReadMany(startTime time.Time, endTime *tim
 	return transactions, nil
 }
 
-func (c *GroshiAPIClient) TransactionsUpdate(
+func (c *APIClient) TransactionsUpdate(
 	uuid string, newAmount *int, newCurrency *string, newDescription *string, newTimestamp *time.Time,
 ) (*Transaction, error) {
 	bodyParams := make(map[string]any)
@@ -358,7 +358,7 @@ func (c *GroshiAPIClient) TransactionsUpdate(
 	return &transaction, nil
 }
 
-func (c *GroshiAPIClient) TransactionsDelete(uuid string) (*Transaction, error) {
+func (c *APIClient) TransactionsDelete(uuid string) (*Transaction, error) {
 	transaction := Transaction{}
 	err := c.sendRequest(
 		http.MethodDelete,
@@ -374,7 +374,7 @@ func (c *GroshiAPIClient) TransactionsDelete(uuid string) (*Transaction, error) 
 	return &transaction, nil
 }
 
-func (c *GroshiAPIClient) TransactionsReadSummary(currency string, startTime time.Time, endTime *time.Time) (*TransactionsSummary, error) {
+func (c *APIClient) TransactionsReadSummary(currency string, startTime time.Time, endTime *time.Time) (*TransactionsSummary, error) {
 	queryParams := map[string]string{
 		"currency":   currency,
 		"start_time": startTime.Format(timeFormat),
@@ -401,7 +401,7 @@ func (c *GroshiAPIClient) TransactionsReadSummary(currency string, startTime tim
 // methods related to transactions:
 
 // CurrenciesRead returns slice of available currencies.
-func (c *GroshiAPIClient) CurrenciesRead() ([]*Currency, error) {
+func (c *APIClient) CurrenciesRead() ([]*Currency, error) {
 	var currencies []*Currency
 	err := c.sendRequest(
 		http.MethodGet,
@@ -417,10 +417,10 @@ func (c *GroshiAPIClient) CurrenciesRead() ([]*Currency, error) {
 	return currencies, nil
 }
 
-// NewGroshiAPIClient creates a new GroshiAPIClient instance and returns pointer to it.
-// It is the recommended method to produce GroshiAPIClient.
-func NewGroshiAPIClient(baseURL string, token string) *GroshiAPIClient {
-	return &GroshiAPIClient{
+// NewAPIClient creates a new APIClient instance and returns pointer to it.
+// It is the recommended method to produce APIClient.
+func NewAPIClient(baseURL string, token string) *APIClient {
+	return &APIClient{
 		baseURL: strings.TrimRight(baseURL, "/"),
 		token:   token,
 	}
